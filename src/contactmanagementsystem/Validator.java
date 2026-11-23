@@ -1,11 +1,8 @@
 package contactmanagementsystem;
 
-// [NEW] Validations for name, phone number and email. Written by hand (no java.util.regex).
-// Every check method returns null when the input is OK, or a message that says what is wrong.
-
 public class Validator {
 
-    // ---- Name ------------------------------------------------------------
+  
     public static String checkName(String name) {
         if (name == null || name.trim().length() == 0) {
             return "Name cannot be empty.";
@@ -29,7 +26,7 @@ public class Validator {
         return null;
     }
 
-    // ---- Phone number (Ethan's prefix validation + length / digits check) ----
+    
     public static String checkPhone(String phone, TelecoProvider provider) {
         if (phone == null || phone.length() == 0) {
             return "Phone number cannot be empty.";
@@ -42,7 +39,7 @@ public class Validator {
         if (phone.length() != 11) {
             return "Phone number must be exactly 11 digits (example: 09171234567).";
         }
-        // Ethan's validation: the number must start with a prefix that belongs to the chosen Telco
+        
         if (!provider.isValidPrefix(phone)) {
             return "Invalid prefix for " + provider.getName() + ".\n"
                  + "    Allowed prefixes: " + provider.getAllPrefixes();
@@ -50,9 +47,7 @@ public class Validator {
         return null;
     }
 
-    // ---- Email -----------------------------------------------------------
-    // Rules: one '@'; text before it (letters, digits and . _ % + -); a domain after it
-    // (letters, digits, '.' and '-') with at least one '.', and a last part of 2+ letters (like .com).
+    
     public static String checkEmail(String email) {
         if (email == null || email.length() == 0) {
             return "Email cannot be empty.";
@@ -88,7 +83,7 @@ public class Validator {
             return "Email needs a domain after the '@' (example: gmail.com).";
         }
 
-        // Part before the '@'
+       
         for (int i = 0; i < local.length(); i++) {
             char c = local.charAt(i);
             if (!isLetter(c) && !isDigit(c) && c != '.' && c != '_' && c != '%' && c != '+' && c != '-') {
@@ -99,7 +94,7 @@ public class Validator {
             return "Email cannot start or end with '.' or have '..' before the '@'.";
         }
 
-        // Domain (after the '@')
+        
         for (int i = 0; i < domain.length(); i++) {
             char c = domain.charAt(i);
             if (!isLetter(c) && !isDigit(c) && c != '.' && c != '-') {
@@ -127,7 +122,7 @@ public class Validator {
         return null;
     }
 
-    // ---- Small helpers (our own versions) -----------------------------------
+   
     private static boolean isDigit(char c) {
         return c >= '0' && c <= '9';
     }

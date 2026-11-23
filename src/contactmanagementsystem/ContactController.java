@@ -1,18 +1,15 @@
 package contactmanagementsystem;
 
-import java.util.Scanner;    // Matt's original import (Scanner is allowed)
-
-// [CHANGED] Typed input still comes from Matt's Scanner, but it is now read through our KeyInput class
-// (KeyInput.readLine(input)), which lets ESC / Backspace go back one step.
+import java.util.Scanner;    
 
 public class ContactController {
 
-    // [ADDED] readInt() returns this when the user pressed ESC / Backspace ("go back")
+    
     private static final int BACK = Integer.MIN_VALUE;
 
     private ContactList list;
     private ContactMenu menu;
-    private Scanner     input;      // Matt's Scanner (kept)
+    private Scanner     input;      
     private int         nextId;
 
 
@@ -28,10 +25,10 @@ public class ContactController {
         System.out.println("   ╔══════════════════════════════╗");
         System.out.println("   ║       CONTACT MANAGER        ║");
         System.out.println("   ╚══════════════════════════════╝");
-        System.out.println("   " + KeyInput.getHint());          // [ADDED] tells which keys go back
-        loadFromFile(false);                                      // [ADDED] File Handling: load saved contacts
+        System.out.println("   " + KeyInput.getHint());          
+        loadFromFile(false);                                      
         System.out.println("   Press ENTER to start...");
-        KeyInput.readLine(input);                                 // [CHANGED] was input.nextLine()
+        KeyInput.readLine(input);                                 
         mainLoop();
     }
 
@@ -44,7 +41,7 @@ public class ContactController {
             System.out.print("Choose: ");
             choice = readInt();
 
-            // [ADDED] ESC at the main menu: there is nothing to go back to
+            
             if (choice == BACK) {
                 System.out.println("You are already at the main menu. Choose 0 to exit.");
                 continue;
@@ -69,17 +66,16 @@ public class ContactController {
                 case 6:
                     System.out.println("Size: " + list.getSize()
                             + ", Capacity: " + list.getCapacity());
-                    // [ADDED] every Telco has its own Dynamic Array, so show each one
                     for (int i = 0; i < TelecoProvider.ALL.length; i++) {
                         TelecoProvider p = TelecoProvider.ALL[i];
                         System.out.println("  " + p.getName() + " array -> Size: " + list.getSize(p)
                                 + ", Capacity: " + list.getCapacity(p));
                     }
                     break;
-                case 7:                                           // [ADDED] File Handling
+                case 7:                                           
                     saveToFile(true);
                     break;
-                case 8:                                           // [ADDED] File Handling
+                case 8:                                           
                     if (FileHandler.exists()) {
                         list.clear();
                         loadFromFile(true);
@@ -88,7 +84,7 @@ public class ContactController {
                     }
                     break;
                 case 0:
-                    saveToFile(false);                            // [ADDED] save before leaving
+                    saveToFile(false);                            
                     System.out.println("Goodbye!");
                     break;
                 default:
@@ -101,18 +97,17 @@ public class ContactController {
 
     private void addAtEnd() {
         Contact c = askForContact();
-        if (c == null) {                                          // [ADDED] ESC on the first step
+        if (c == null) {                                         
             System.out.println("Add contact cancelled.");
             return;
         }
         list.insertAtEnd(c);
         nextId++;
         System.out.println("Contact added with ID " + c.getId() + ".");
-        // [ADDED from Ethan] show the saved contact and where it is inside its Telco's array
         System.out.println("  ✔ " + c);
         System.out.println("  Index in " + c.getProvider().getName() + " array: "
                 + (list.getSize(c.getProvider()) - 1));
-        saveToFile(false);                                        // [ADDED] auto-save after adding
+        saveToFile(false);                                        
     }
 
 
@@ -120,7 +115,7 @@ public class ContactController {
         menu.showContacts();
         System.out.print("Insert at position (1 = first): ");
         int position = readInt();
-        if (position == BACK) {                                   // [ADDED] ESC -> back to the menu
+        if (position == BACK) {                                   
             return;
         }
 
@@ -131,7 +126,7 @@ public class ContactController {
         }
 
         Contact c = askForContact();
-        if (c == null) {                                          // [ADDED] ESC on the first step
+        if (c == null) {                                          
             System.out.println("Insert cancelled.");
             return;
         }
@@ -139,7 +134,7 @@ public class ContactController {
         if (list.insertAtPosition(position - 1, c)) {
             nextId++;
             System.out.println("Contact inserted.");
-            saveToFile(false);                                    // [ADDED] auto-save
+            saveToFile(false);                                   
         } else {
             System.out.println("Could not insert (insertAtPosition() not written yet?).");
         }
@@ -150,22 +145,18 @@ public class ContactController {
         menu.showContacts();
         System.out.print("Delete position: ");
         int position = readInt();
-        if (position == BACK) {                                   // [ADDED] ESC -> back to the menu
+        if (position == BACK) {                                  
             return;
         }
 
         if (list.delete(position - 1)) {
             System.out.println("Deleted.");
-            saveToFile(false);                                    // [ADDED] auto-save
+            saveToFile(false);                                    
         } else {
             System.out.println("Could not delete (bad position, or delete() not written yet).");
         }
     }
 
-
-    // [CHANGED] Search flow: search type -> Telco -> what to look for.
-    // ESC goes back one step (value -> Telco -> search type -> main menu).
-    // Linear search looks for a NAME, binary search looks for an ID.
     private void searchContact() {
         int type = 0;
         TelecoProvider provider = null;
@@ -190,9 +181,9 @@ public class ContactController {
                 }
                 step = 1;
             } else if (step == 1) {
-                provider = chooseProvider();                      // [ADDED from Ethan] search inside ONE Telco's array
+                provider = chooseProvider();                      
                 if (provider == null) {
-                    step = 0;                                     // ESC -> back to the search type
+                    step = 0;                                     
                     continue;
                 }
                 step = 2;
@@ -200,7 +191,7 @@ public class ContactController {
                 if (type == 1) {
                     System.out.print("Name to find: ");
                     String typed = KeyInput.readLine(input);
-                    if (typed == null) {                          // ESC -> back to the Telco
+                    if (typed == null) {                         
                         step = 1;
                         continue;
                     }
@@ -212,7 +203,7 @@ public class ContactController {
                 } else {
                     System.out.print("ID to find: ");
                     id = readInt();
-                    if (id == BACK) {                             // ESC -> back to the Telco
+                    if (id == BACK) {                           
                         step = 1;
                         continue;
                     }
@@ -252,10 +243,6 @@ public class ContactController {
         }
     }
 
-
-    // [CHANGED] Now follows Ethan's flow: Telco first, then Name, Phone (checked against the Telco's
-    // prefixes) and Email. Every answer is validated. ESC / Backspace goes back to the PREVIOUS step;
-    // ESC on the very first step cancels and returns null.
     private Contact askForContact() {
         TelecoProvider provider = null;
         String name = null;
@@ -321,12 +308,10 @@ public class ContactController {
                 step = 4;
             }
         }
-        // [CHANGED] also gives the Telco and its corresponding number (Ethan's idea)
         return new Contact(nextId, name, phone, email, provider, list.nextCorrespondingNumber(provider));
     }
 
 
-    // [ADDED from Ethan] Choose the Telco Provider. Returns null if the user pressed ESC / Backspace.
     private TelecoProvider chooseProvider() {
         while (true) {
             System.out.println("Choose Teleco Provider:");
@@ -347,7 +332,7 @@ public class ContactController {
     }
 
 
-    // [ADDED] File Handling: save everything to contacts.txt
+    
     private void saveToFile(boolean showMessage) {
         if (FileHandler.save(list)) {
             if (showMessage) {
@@ -358,7 +343,7 @@ public class ContactController {
         }
     }
 
-    // [ADDED] File Handling: load contacts.txt, then continue the IDs after the biggest saved ID
+    
     private void loadFromFile(boolean showMessage) {
         int loaded = FileHandler.load(list);
         if (loaded == -1) {
@@ -384,9 +369,6 @@ public class ContactController {
         }
     }
 
-
-    // [CHANGED] Same idea as Matt's readInt (keep asking until a number is typed), but it reads
-    // through KeyInput (which uses Matt's Scanner), and returns BACK when ESC / Backspace is pressed.
     private int readInt() {
         while (true) {
             String typed = KeyInput.readLine(input);

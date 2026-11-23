@@ -1,19 +1,17 @@
 package contactmanagementsystem;
 
-// [ADDED from Ethan] Custom Dynamic Array (no ArrayList). Each Telco Provider gets its own one.
+
 public class DynamicArray<T> {
     private T[] data;
     private int size;
     private int capacity;
-    private String label;                       // [ADDED] name of the array (e.g. "Smart") for the debug message
-
-    // [ADDED] When false, the "resized" debug message is hidden (used while loading the file)
+    private String label;                       
     public static boolean debug = true;
 
     @SuppressWarnings("unchecked")
     public DynamicArray(String label) {
         this.label = label;
-        capacity = 4;                           // [CHANGED] starts at 4, same as Matt's original ContactList capacity
+        capacity = 4;                           
         data = (T[]) new Object[capacity];
         size = 0;
     }

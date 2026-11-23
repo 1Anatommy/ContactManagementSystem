@@ -1,17 +1,5 @@
 package contactmanagementsystem;
 
-// [ADDED from Ethan]
-// [CHANGED] Removed "import java.util.Arrays/List" -> prefixes are stored in plain String[] arrays.
-// [CHANGED] Duplicate prefixes inside one provider list (Globe 0926 and 0956 were listed twice) were removed.
-// NOTE: 0992 is in BOTH the Smart list and the DITO list in the prefixes you gave DeepSeek. It was kept
-//       in both, so a 0992 number is accepted for either provider.
-
-/**
- * TelecoProvider - the three telecommunications providers with their corresponding
- * identification codes and allowed number prefixes.
- *
- * Codes:  Smart = 001, Globe = 01, DITO = 1
- */
 public class TelecoProvider {
 
     public static final TelecoProvider SMART = new TelecoProvider("Smart", "001", new String[] {
@@ -29,7 +17,6 @@ public class TelecoProvider {
             "0895","0896","0897","0898","0991","0992","0993","0994"
     });
 
-    // [ADDED] All providers in one array (Smart, Globe, DITO) so other classes can loop over them
     public static final TelecoProvider[] ALL = { SMART, GLOBE, DITO };
 
     private final String name;
@@ -46,7 +33,7 @@ public class TelecoProvider {
     public String getCode() { return code; }
     public int getCodeLength() { return code.length(); }
 
-    /** Checks if the given phone number starts with any allowed prefix for this provider. */
+    
     public boolean isValidPrefix(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.isEmpty()) return false;
         for (int i = 0; i < prefixes.length; i++) {
@@ -57,7 +44,7 @@ public class TelecoProvider {
         return false;
     }
 
-    /** Returns a short string listing a few prefixes for user feedback. */
+    
     public String getPrefixesSample() {
         StringBuilder sb = new StringBuilder();
         int limit = Math.min(3, prefixes.length);
@@ -69,7 +56,7 @@ public class TelecoProvider {
         return sb.toString();
     }
 
-    /** [ADDED] Returns every allowed prefix (used in the validation error message). */
+    
     public String getAllPrefixes() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < prefixes.length; i++) {
@@ -79,7 +66,7 @@ public class TelecoProvider {
         return sb.toString();
     }
 
-    /** [ADDED] Finds a provider by its name (used when loading the file). Returns null if not found. */
+   
     public static TelecoProvider fromName(String name) {
         if (name == null) return null;
         for (int i = 0; i < ALL.length; i++) {

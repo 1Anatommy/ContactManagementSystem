@@ -1,18 +1,11 @@
 package contactmanagementsystem;
-// [NEW] File Handling System - saves / loads the contacts to a text file (contacts.txt).
-// Written in the same style as the professor's sample FileHandler: BufferedWriter / BufferedReader,
-// one record per line, fields separated by '|', and fully-written java.io names (so no import lines).
-//
-// File format (one contact per line):
-//   CMS-CONTACTS-V1
-//   id|Telco|correspondingNumber|name|phone|email
 
 public class FileHandler {
 
     public static final String FILE_NAME = "contacts.txt";
     private static final String HEADER = "CMS-CONTACTS-V1";
 
-    private static int skippedLines = 0;      // how many bad lines the last load() ignored
+    private static int skippedLines = 0;      
 
     public static boolean exists() {
         return new java.io.File(FILE_NAME).exists();
@@ -22,7 +15,7 @@ public class FileHandler {
         return skippedLines;
     }
 
-    // Writes ALL contacts (Smart, then Globe, then DITO) to the file. Returns true if it worked.
+    
     public static boolean save(ContactList list) {
         try (java.io.BufferedWriter writer = new java.io.BufferedWriter(
                 new java.io.OutputStreamWriter(new java.io.FileOutputStream(FILE_NAME), "UTF-8"))) {
@@ -44,9 +37,6 @@ public class FileHandler {
         }
     }
 
-    // Reads the file and adds every good line to the list (into the Dynamic Array of its Telco).
-    // Returns how many contacts were loaded, or -1 if the file is missing / cannot be read.
-    // Lines that are broken or fail the validations are skipped (see getSkippedLines()).
     public static int load(ContactList list) {
         skippedLines = 0;
         java.io.File file = new java.io.File(FILE_NAME);
@@ -55,13 +45,13 @@ public class FileHandler {
         }
 
         int loaded = 0;
-        DynamicArray.debug = false;        // do not print "resized" messages for every loaded contact
+        DynamicArray.debug = false;        
         try (java.io.BufferedReader reader = new java.io.BufferedReader(
                 new java.io.InputStreamReader(new java.io.FileInputStream(file), "UTF-8"))) {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                line = line.replace("﻿", "").trim();     // also ignores a BOM if an editor added one
+                line = line.replace("﻿", "").trim();     
                 if (line.length() == 0 || line.equals(HEADER)) {
                     continue;
                 }
@@ -80,13 +70,13 @@ public class FileHandler {
         }
     }
 
-    // Turns ONE line of the file into a Contact. Returns false if the line is not valid.
+    
     private static boolean loadLine(ContactList list, String line) {
         String[] parts = line.split("\\|", -1);
         if (parts.length != 6) {
             return false;
         }
-        // parts: 0=id  1=Telco  2=corresponding number  3=name  4=phone  5=email
+        
         String name  = parts[3].trim();
         String phone = parts[4].trim();
         String email = parts[5].trim();
@@ -107,7 +97,7 @@ public class FileHandler {
             return false;
         }
 
-        // Same validations as when typing a new contact
+       
         if (Validator.checkName(name) != null
                 || Validator.checkPhone(phone, provider) != null
                 || Validator.checkEmail(email) != null) {

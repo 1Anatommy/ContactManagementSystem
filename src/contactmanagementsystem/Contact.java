@@ -6,8 +6,8 @@ public class Contact {
     private String name;
     private String phone;
     private String email;
-    private TelecoProvider provider;        // [ADDED from Ethan] Smart / Globe / DITO
-    private String correspondingNumber;     // [ADDED from Ethan] e.g. Globe = 01, 02 ... Smart = 001 ... DITO = 1 ...
+    private TelecoProvider provider;        
+    private String correspondingNumber;     
 
     // [CHANGED] The constructor now also takes the provider and the corresponding number
     public Contact(int id, String name, String phone, String email,
