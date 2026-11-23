@@ -85,7 +85,7 @@ public class ContactController {
                     break;
                 case 0:
                     saveToFile(false);                            
-                    System.out.println("Goodbye!");
+                    System.out.println("Your contacts are safely saved. Thanks for using our Contact Manager. Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice, try again.");

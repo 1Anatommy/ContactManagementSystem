@@ -9,7 +9,7 @@ public class Contact {
     private TelecoProvider provider;        
     private String correspondingNumber;     
 
-    // [CHANGED] The constructor now also takes the provider and the corresponding number
+    
     public Contact(int id, String name, String phone, String email,
                    TelecoProvider provider, String correspondingNumber) {
         this.id    = id;
