@@ -5,9 +5,11 @@ public class DynamicArray<T> {
     private T[] data;
     private int size;
     private int capacity;
-    private String label;                       
+    private String label;                      
+ 
+    
     public static boolean debug = true;
-
+ 
     @SuppressWarnings("unchecked")
     public DynamicArray(String label) {
         this.label = label;
@@ -15,7 +17,7 @@ public class DynamicArray<T> {
         data = (T[]) new Object[capacity];
         size = 0;
     }
-
+ 
     public void add(T element) {
         if (size == capacity) {
             resize();
@@ -23,7 +25,7 @@ public class DynamicArray<T> {
         data[size] = element;
         size++;
     }
-
+ 
     @SuppressWarnings("unchecked")
     private void resize() {
         capacity = capacity * 2;
@@ -36,14 +38,14 @@ public class DynamicArray<T> {
             System.out.println("  [Debug] " + label + " array resized -> new capacity: " + capacity);
         }
     }
-
+ 
     public T get(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
         return data[index];
     }
-
+ 
     public int size() { return size; }
     public int getCapacity() { return capacity; }
     public boolean isEmpty() { return size == 0; }

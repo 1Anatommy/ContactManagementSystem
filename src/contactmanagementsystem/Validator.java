@@ -1,8 +1,8 @@
 package contactmanagementsystem;
 
 public class Validator {
-
-  
+ 
+    
     public static String checkName(String name) {
         if (name == null || name.trim().length() == 0) {
             return "Name cannot be empty.";
@@ -25,7 +25,7 @@ public class Validator {
         }
         return null;
     }
-
+ 
     
     public static String checkPhone(String phone, TelecoProvider provider) {
         if (phone == null || phone.length() == 0) {
@@ -46,7 +46,15 @@ public class Validator {
         }
         return null;
     }
-
+ 
+   
+    public static String checkEmailOptional(String email) {
+        if (email == null || email.length() == 0) {
+            return null;
+        }
+        return checkEmail(email);
+    }
+ 
     
     public static String checkEmail(String email) {
         if (email == null || email.length() == 0) {
@@ -55,7 +63,7 @@ public class Validator {
         if (email.length() > 100) {
             return "Email is too long (max 100 characters).";
         }
-
+ 
         int at = -1;
         for (int i = 0; i < email.length(); i++) {
             char c = email.charAt(i);
@@ -72,18 +80,18 @@ public class Validator {
         if (at == -1) {
             return "Email must contain '@' (example: name@gmail.com).";
         }
-
+ 
         String local  = email.substring(0, at);
         String domain = email.substring(at + 1);
-
+ 
         if (local.length() == 0) {
             return "Email needs some text before the '@'.";
         }
         if (domain.length() == 0) {
             return "Email needs a domain after the '@' (example: gmail.com).";
         }
-
-       
+ 
+    
         for (int i = 0; i < local.length(); i++) {
             char c = local.charAt(i);
             if (!isLetter(c) && !isDigit(c) && c != '.' && c != '_' && c != '%' && c != '+' && c != '-') {
@@ -93,7 +101,7 @@ public class Validator {
         if (local.charAt(0) == '.' || local.charAt(local.length() - 1) == '.' || local.indexOf("..") != -1) {
             return "Email cannot start or end with '.' or have '..' before the '@'.";
         }
-
+ 
         
         for (int i = 0; i < domain.length(); i++) {
             char c = domain.charAt(i);
@@ -121,14 +129,13 @@ public class Validator {
         }
         return null;
     }
-
-   
+ 
+    
     private static boolean isDigit(char c) {
         return c >= '0' && c <= '9';
     }
-
+ 
     private static boolean isLetter(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
     }
 }
-
