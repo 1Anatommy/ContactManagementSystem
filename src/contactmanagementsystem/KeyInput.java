@@ -5,27 +5,25 @@ import java.util.Scanner;
  
 public class KeyInput {
  
-    private static final int KEY_EOF    = -1;   
-    private static final int KEY_IGNORE = -2;    
+    private static final int KEY_EOF    = -1;
+    private static final int KEY_IGNORE = -2;
     private static final int KEY_ESC    = 27;
  
     private static final int MODE_NOT_STARTED = 0;
-    private static final int MODE_LINE        = 1;   
-    private static final int MODE_UNIX        = 2;   
-    private static final int MODE_WINDOWS     = 3;   
+    private static final int MODE_LINE        = 1;
+    private static final int MODE_UNIX        = 2;
+    private static final int MODE_WINDOWS     = 3;
  
     private static int mode = MODE_NOT_STARTED;
-    private static String savedTerminalSettings = null;   
-    private static Process windowsHelper = null;          
+    private static String savedTerminalSettings = null;
+    private static Process windowsHelper = null;
     private static InputStream windowsHelperOut = null;
  
-
     private static final String WINDOWS_SCRIPT =
             "try{[void][Console]::KeyAvailable;[Console]::Out.WriteLine('READY');"
           + "while($true){$k=[Console]::ReadKey($true);[Console]::Out.WriteLine('K,'+[int]$k.KeyChar)}}"
           + "catch{exit 1}";
  
-    
     public static String readLine(Scanner input) {
         if (mode == MODE_NOT_STARTED) {
             start();
@@ -36,7 +34,6 @@ public class KeyInput {
         return readLineKeys();
     }
  
-    
     public static String getHint() {
         if (mode == MODE_NOT_STARTED) {
             start();
@@ -47,7 +44,6 @@ public class KeyInput {
         return "Tip: press ESC (or Backspace on an empty field) to go back one step.";
     }
  
-    
     private static void start() {
         mode = MODE_LINE;
         if (System.getProperty("cms.simple") != null) {
@@ -66,7 +62,7 @@ public class KeyInput {
         }
  
         if (mode != MODE_LINE) {
-            
+ 
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     restoreTerminal();
@@ -75,14 +71,13 @@ public class KeyInput {
         }
     }
  
-   
     private static boolean startUnixRawMode() {
         try {
-            String saved = runStty("-g");                    
+            String saved = runStty("-g");
             if (saved == null || saved.trim().length() == 0) {
-                return false;                                
+                return false;
             }
-           
+ 
             if (runStty("-icanon -echo min 1 time 0") == null) {
                 return false;
             }
@@ -93,10 +88,9 @@ public class KeyInput {
         }
     }
  
-    
     private static String runStty(String args) throws Exception {
         ProcessBuilder pb = new ProcessBuilder("sh", "-c", "stty " + args + " 2>/dev/null");
-        pb.redirectInput(ProcessBuilder.Redirect.INHERIT);   
+        pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
         Process p = pb.start();
         InputStream out = p.getInputStream();
         StringBuilder sb = new StringBuilder();
@@ -110,19 +104,18 @@ public class KeyInput {
         return sb.toString();
     }
  
-    
     private static boolean startWindowsHelper() {
         try {
             ProcessBuilder pb = new ProcessBuilder("powershell", "-NoProfile", "-NonInteractive",
                     "-ExecutionPolicy", "Bypass", "-Command", WINDOWS_SCRIPT);
-            pb.redirectInput(ProcessBuilder.Redirect.INHERIT);   // the helper reads OUR console
+            pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
             pb.redirectErrorStream(true);
             windowsHelper = pb.start();
             windowsHelperOut = windowsHelper.getInputStream();
  
             while (true) {
                 String line = readHelperLine();
-                if (line == null) {                    
+                if (line == null) {
                     windowsHelper.destroy();
                     windowsHelper = null;
                     return false;
@@ -165,27 +158,24 @@ public class KeyInput {
                 windowsHelper = null;
             }
         } catch (Exception e) {
-            // nothing else we can do
+ 
         }
     }
  
-    
     private static String readLineSimple(Scanner input) {
         try {
-            String line = input.nextLine();                       
+            String line = input.nextLine();
  
-            
             if (line.indexOf((char) KEY_ESC) != -1) return null;
             if (line.length() > 0 && (line.charAt(0) == 8 || line.charAt(0) == 127)) return null;
             if (line.trim().equals("`")) return null;
             return line;
-        } catch (Exception e) {                                   
+        } catch (Exception e) {
             endOfInput();
             return null;
         }
     }
  
-   
     private static String readLineKeys() {
         StringBuilder typed = new StringBuilder();
  
@@ -198,29 +188,29 @@ public class KeyInput {
             if (key == KEY_IGNORE) {
                 continue;
             }
-            if (key == '\n' || key == '\r') {                      
+            if (key == '\n' || key == '\r') {
                 System.out.println();
                 return typed.toString();
             }
-            if (key == KEY_ESC) {                                  
+            if (key == KEY_ESC) {
                 System.out.println("(back)");
                 return null;
             }
-            if (key == 8 || key == 127) {                          
-                if (typed.length() == 0) {                         
+            if (key == 8 || key == 127) {
+                if (typed.length() == 0) {
                     System.out.println("(back)");
                     return null;
                 }
-                typed.setLength(typed.length() - 1);               
+                typed.setLength(typed.length() - 1);
                 System.out.print("\b \b");
                 System.out.flush();
                 continue;
             }
-            if (key == '`' && typed.length() == 0) {               
+            if (key == '`' && typed.length() == 0) {
                 System.out.println("(back)");
                 return null;
             }
-            if (key >= 32 && typed.length() < 200) {               
+            if (key >= 32 && typed.length() < 200) {
                 typed.append((char) key);
                 System.out.print((char) key);
                 System.out.flush();
@@ -228,7 +218,6 @@ public class KeyInput {
         }
     }
  
-   
     private static int nextKey() {
         try {
             if (mode == MODE_WINDOWS) {
@@ -255,7 +244,7 @@ public class KeyInput {
                     }
                     code = code * 10 + (c - '0');
                 }
-                if (code == 0) {                  
+                if (code == 0) {
                     return KEY_IGNORE;
                 }
                 return code;
@@ -270,7 +259,7 @@ public class KeyInput {
         }
  
         if (b == 27) {
-            
+ 
             if (System.in.available() > 0) {
                 int next = System.in.read();
                 if (next == '[') {
@@ -286,7 +275,6 @@ public class KeyInput {
             return KEY_ESC;
         }
  
-        
         if (b >= 0xC2 && b < 0xF0) {
             int extra = (b < 0xE0) ? 1 : 2;
             byte[] bytes = new byte[extra + 1];
@@ -300,7 +288,7 @@ public class KeyInput {
             }
             return new String(bytes, "UTF-8").charAt(0);
         }
-        if (b >= 0xF0) {                        
+        if (b >= 0xF0) {
             System.in.read();
             System.in.read();
             System.in.read();
@@ -312,11 +300,9 @@ public class KeyInput {
         return b;
     }
  
-    
     private static void endOfInput() {
         System.out.println();
         System.out.println("No more input. Exiting...");
         System.exit(0);
     }
 }
-

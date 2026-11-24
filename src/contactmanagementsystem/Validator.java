@@ -2,7 +2,6 @@ package contactmanagementsystem;
 
 public class Validator {
  
-    
     public static String checkName(String name) {
         if (name == null || name.trim().length() == 0) {
             return "Name cannot be empty.";
@@ -26,7 +25,6 @@ public class Validator {
         return null;
     }
  
-    
     public static String checkPhone(String phone, TelecoProvider provider) {
         if (phone == null || phone.length() == 0) {
             return "Phone number cannot be empty.";
@@ -39,7 +37,7 @@ public class Validator {
         if (phone.length() != 11) {
             return "Phone number must be exactly 11 digits (example: 09171234567).";
         }
-        
+ 
         if (!provider.isValidPrefix(phone)) {
             return "Invalid prefix for " + provider.getName() + ".\n"
                  + "    Allowed prefixes: " + provider.getAllPrefixes();
@@ -47,7 +45,6 @@ public class Validator {
         return null;
     }
  
-   
     public static String checkEmailOptional(String email) {
         if (email == null || email.length() == 0) {
             return null;
@@ -55,7 +52,6 @@ public class Validator {
         return checkEmail(email);
     }
  
-    
     public static String checkEmail(String email) {
         if (email == null || email.length() == 0) {
             return "Email cannot be empty.";
@@ -91,7 +87,6 @@ public class Validator {
             return "Email needs a domain after the '@' (example: gmail.com).";
         }
  
-    
         for (int i = 0; i < local.length(); i++) {
             char c = local.charAt(i);
             if (!isLetter(c) && !isDigit(c) && c != '.' && c != '_' && c != '%' && c != '+' && c != '-') {
@@ -102,7 +97,6 @@ public class Validator {
             return "Email cannot start or end with '.' or have '..' before the '@'.";
         }
  
-        
         for (int i = 0; i < domain.length(); i++) {
             char c = domain.charAt(i);
             if (!isLetter(c) && !isDigit(c) && c != '.' && c != '-') {
@@ -130,7 +124,6 @@ public class Validator {
         return null;
     }
  
-    
     private static boolean isDigit(char c) {
         return c >= '0' && c <= '9';
     }

@@ -6,8 +6,8 @@ public class FileHandler {
     private static final String HEADER = "CMS-CONTACTS-V2";
     private static final String OLD_HEADER = "CMS-CONTACTS-V1";
  
-    private static int skippedLines = 0;      
-    private static boolean migrated = false;  
+    private static int skippedLines = 0;
+    private static boolean migrated = false;
  
     public static boolean exists() {
         return new java.io.File(FILE_NAME).exists();
@@ -21,7 +21,6 @@ public class FileHandler {
         return migrated;
     }
  
-    
     public static boolean save(ContactList list) {
         try (java.io.BufferedWriter writer = new java.io.BufferedWriter(
                 new java.io.OutputStreamWriter(new java.io.FileOutputStream(FILE_NAME), "UTF-8"))) {
@@ -43,7 +42,6 @@ public class FileHandler {
         }
     }
  
-    
     public static int load(ContactList list) {
         skippedLines = 0;
         migrated = false;
@@ -53,23 +51,23 @@ public class FileHandler {
         }
  
         int loaded = 0;
-        DynamicArray.debug = false;        
+        DynamicArray.debug = false;
         try (java.io.BufferedReader reader = new java.io.BufferedReader(
                 new java.io.InputStreamReader(new java.io.FileInputStream(file), "UTF-8"))) {
  
             String line;
             boolean firstLine = true;
             while ((line = reader.readLine()) != null) {
-                line = line.replace("\uFEFF", "").trim();    
+                line = line.replace("\uFEFF", "").trim();
                 if (line.length() == 0) {
                     continue;
                 }
-                if (firstLine) {                              
+                if (firstLine) {
                     firstLine = false;
                     if (line.equals(HEADER)) {
                         continue;
                     }
-                    migrated = true;                          
+                    migrated = true;
                     if (line.equals(OLD_HEADER)) {
                         continue;
                     }
@@ -88,12 +86,13 @@ public class FileHandler {
             DynamicArray.debug = true;
         }
     }
-
+ 
     private static boolean loadLine(ContactList list, String line) {
         String[] parts = line.split("\\|", -1);
         if (parts.length != 6) {
             return false;
         }
+ 
         String name  = parts[3].trim();
         String phone = parts[4].trim();
         String email = parts[5].trim();
@@ -113,7 +112,6 @@ public class FileHandler {
             return false;
         }
  
-        
         if (Validator.checkName(name) != null
                 || Validator.checkPhone(phone, provider) != null
                 || Validator.checkEmailOptional(email) != null) {
@@ -121,9 +119,9 @@ public class FileHandler {
         }
  
         if (migrated) {
-            id = list.nextId(provider);                      
+            id = list.nextId(provider);
         }
-       
+ 
         list.insertAtEnd(new Contact(id, name, phone, email, provider, list.formatCode(provider, id)));
         return true;
     }

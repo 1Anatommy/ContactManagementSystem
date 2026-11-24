@@ -2,14 +2,13 @@ package contactmanagementsystem;
 
 public class Contact {
  
-    private int    id;                      
+    private int    id;
     private String name;
     private String phone;
-    private String email;                   
-    private TelecoProvider provider;        
-    private String correspondingNumber;     
+    private String email;
+    private TelecoProvider provider;
+    private String correspondingNumber;
  
-    
     public Contact(int id, String name, String phone, String email,
                    TelecoProvider provider, String correspondingNumber) {
         this.id    = id;
@@ -23,7 +22,12 @@ public class Contact {
     public int    getId()
     { return id; }
  
-    
+    public void setId(int id)
+    { this.id = id; }
+ 
+    public void setCorrespondingNumber(String correspondingNumber)
+    { this.correspondingNumber = correspondingNumber; }
+ 
     public String getIdLabel()
     { return id + provider.getInitial(); }
  
@@ -36,14 +40,12 @@ public class Contact {
     public String getEmail()
     { return email; }
  
-  
     public String getEmailDisplay()
     { return email.length() == 0 ? "(no email)" : email; }
  
     public TelecoProvider getProvider()
     { return provider; }
  
-
     public String getCorrespondingNumber()
     { return correspondingNumber; }
  
@@ -53,4 +55,3 @@ public class Contact {
                 + name + " - " + phone + " - " + getEmailDisplay();
     }
 }
-

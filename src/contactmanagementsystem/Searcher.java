@@ -9,7 +9,6 @@ public class Searcher {
         int[] temp = new int[array.size()];
         int count = 0;
  
-        
         for (int i = 0; i < array.size(); i++) {
             String fullName = array.get(i).getName().toLowerCase();
  
@@ -53,22 +52,21 @@ public class Searcher {
         return -1;
     }
  
-    
     static int recursiveBinarySearch(DynamicArray<Contact> array, int code, int low, int high) {
  
-        if (low > high) {                                   
+        if (low > high) {
             return -1;
         }
  
         int mid = low + (high - low) / 2;
-        int midCode = Integer.parseInt(array.get(mid).getCorrespondingNumber());   
+        int midCode = Integer.parseInt(array.get(mid).getCorrespondingNumber());
  
-        if (midCode == code) {                             
+        if (midCode == code) {
             return mid;
         } else if (midCode < code) {
-            return recursiveBinarySearch(array, code, mid + 1, high);   
+            return recursiveBinarySearch(array, code, mid + 1, high);
         } else {
-            return recursiveBinarySearch(array, code, low, mid - 1);    
+            return recursiveBinarySearch(array, code, low, mid - 1);
         }
     }
 }

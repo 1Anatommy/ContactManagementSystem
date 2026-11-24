@@ -18,7 +18,6 @@ public class TelecoProvider {
             "0895","0896","0897","0898","0991","0992","0993","0994"
     });
  
-    
     public static final TelecoProvider[] ALL = { SMART, GLOBE, DITO };
  
     private final String name;
@@ -35,10 +34,8 @@ public class TelecoProvider {
     public String getCode() { return code; }
     public int getCodeLength() { return code.length(); }
  
-    
     public String getInitial() { return name.substring(0, 1).toUpperCase(); }
  
-    
     public boolean isValidPrefix(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.isEmpty()) return false;
         for (int i = 0; i < prefixes.length; i++) {
@@ -49,7 +46,6 @@ public class TelecoProvider {
         return false;
     }
  
-    
     public String getPrefixesSample() {
         StringBuilder sb = new StringBuilder();
         int limit = Math.min(3, prefixes.length);
@@ -61,7 +57,6 @@ public class TelecoProvider {
         return sb.toString();
     }
  
-    
     public String getAllPrefixes() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < prefixes.length; i++) {
@@ -71,7 +66,6 @@ public class TelecoProvider {
         return sb.toString();
     }
  
-   
     public static TelecoProvider fromName(String name) {
         if (name == null) return null;
         for (int i = 0; i < ALL.length; i++) {

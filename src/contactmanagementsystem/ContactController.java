@@ -1,15 +1,15 @@
 package contactmanagementsystem;
 
-import java.util.Scanner;    
+import java.util.Scanner;
  
 public class ContactController {
  
-    
     private static final int BACK = Integer.MIN_VALUE;
  
     private ContactList list;
     private ContactMenu menu;
-    private Scanner     input;      
+    private Scanner     input;
+    private int         lastPosition;
  
     public ContactController() {
         input  = new Scanner(System.in);
@@ -17,22 +17,20 @@ public class ContactController {
         menu   = new ContactMenu(list);
     }
  
- 
     public void start() {
         System.out.println("   ╔══════════════════════════════╗");
         System.out.println("   ║       CONTACT MANAGER        ║");
         System.out.println("   ╚══════════════════════════════╝");
-        System.out.println("   " + KeyInput.getHint());          
-        loadFromFile(false);                                      
-        if (FileHandler.wasMigrated()) {                          
+        System.out.println("   " + KeyInput.getHint());
+        loadFromFile(false);
+        if (FileHandler.wasMigrated()) {
             saveToFile(false);
             System.out.println("   (Old file format: the IDs were renumbered per Telco and the file was updated.)");
         }
         System.out.println("   Press ENTER to start...");
-        KeyInput.readLine(input);                                 
+        KeyInput.readLine(input);
         mainLoop();
     }
- 
  
     public void mainLoop() {
         int choice;
@@ -42,7 +40,6 @@ public class ContactController {
             System.out.print("Choose: ");
             choice = readInt();
  
-            
             if (choice == BACK) {
                 System.out.println("You are already at the main menu. Choose 0 to exit.");
                 continue;
@@ -67,17 +64,17 @@ public class ContactController {
                 case 6:
                     System.out.println("Size: " + list.getSize()
                             + ", Capacity: " + list.getCapacity());
-                    
+ 
                     for (int i = 0; i < TelecoProvider.ALL.length; i++) {
                         TelecoProvider p = TelecoProvider.ALL[i];
                         System.out.println("  " + p.getName() + " array -> Size: " + list.getSize(p)
                                 + ", Capacity: " + list.getCapacity(p));
                     }
                     break;
-                case 7:                                           
+                case 7:
                     saveToFile(true);
                     break;
-                case 8:                                           
+                case 8:
                     if (FileHandler.exists()) {
                         list.clear();
                         loadFromFile(true);
@@ -86,7 +83,7 @@ public class ContactController {
                     }
                     break;
                 case 0:
-                    saveToFile(false);                            
+                    saveToFile(false);
                     System.out.println("Goodbye!");
                     break;
                 default:
@@ -96,64 +93,72 @@ public class ContactController {
         } while (choice != 0);
     }
  
- 
     private void addAtEnd() {
-        Contact c = askForContact();
-        if (c == null) {                                          
+        Contact c = askForContact(false);
+        if (c == null) {
             System.out.println("Add contact cancelled.");
             return;
         }
         list.insertAtEnd(c);
-        System.out.println("Contact added with ID " + c.getIdLabel() + ".");      
+        System.out.println("Contact added with ID " + c.getIdLabel() + ".");
+ 
         System.out.println("  ✔ " + c);
         System.out.println("  Index in " + c.getProvider().getName() + " array: "
                 + (list.getSize(c.getProvider()) - 1));
-        saveToFile(false);                                       
+        saveToFile(false);
     }
  
- 
     private void addAtPosition() {
-        menu.showContacts();
-        System.out.print("Insert at position (1 = first): ");
-        int position = readInt();
-        if (position == BACK) {                                   
-            return;
-        }
- 
- 
-        if (position < 1 || position > list.getSize() + 1) {
-            System.out.println("Invalid position! Pick 1 to " + (list.getSize() + 1) + ".");
-            return;
-        }
- 
-        Contact c = askForContact();
-        if (c == null) {                                          
+        Contact c = askForContact(true);
+        if (c == null) {
             System.out.println("Insert cancelled.");
             return;
         }
  
-        if (list.insertAtPosition(position - 1, c)) {
-            System.out.println("Contact inserted.");
-            saveToFile(false);                                   
+        if (list.insertAtPosition(lastPosition - 1, c)) {
+            System.out.println("Contact inserted at position " + lastPosition + " of the "
+                    + c.getProvider().getName() + " array.");
+            System.out.println("  ✔ " + c);
+            System.out.println("  (The IDs of the " + c.getProvider().getName() + " contacts were renumbered.)");
+            saveToFile(false);
         } else {
-            System.out.println("Could not insert (insertAtPosition() not written yet?).");
+            System.out.println("Could not insert (bad position).");
         }
     }
  
- 
     private void deleteContact() {
         menu.showContacts();
+        if (list.getSize() == 0) {
+            return;
+        }
         System.out.print("Delete position: ");
         int position = readInt();
-        if (position == BACK) {                                   
+        if (position == BACK) {
+            return;
+        }
+ 
+        if (position < 1 || position > list.getSize()) {
+            System.out.println("Invalid position! Pick 1 to " + list.getSize() + ".");
+            return;
+        }
+ 
+        Contact c = list.get(position - 1);
+        String description = c.getIdLabel() + " " + c.getName() + " (" + c.getProvider().getName() + ")";
+        TelecoProvider provider = c.getProvider();
+ 
+        System.out.print("Delete " + description + "? (y/n): ");
+        String answer = KeyInput.readLine(input);
+        if (answer == null || !(answer.trim().equalsIgnoreCase("y") || answer.trim().equalsIgnoreCase("yes"))) {
+            System.out.println("Delete cancelled.");
             return;
         }
  
         if (list.delete(position - 1)) {
-            System.out.println("Deleted.");
-            saveToFile(false);                                    
+            System.out.println("Deleted " + description + ".");
+            System.out.println("  (The IDs of the " + provider.getName() + " contacts were renumbered.)");
+            saveToFile(false);
         } else {
-            System.out.println("Could not delete (bad position, or delete() not written yet).");
+            System.out.println("Could not delete (bad position).");
         }
     }
  
@@ -181,9 +186,9 @@ public class ContactController {
                 }
                 step = 1;
             } else if (step == 1) {
-                provider = chooseProvider();                      
+                provider = chooseProvider();
                 if (provider == null) {
-                    step = 0;                                     
+                    step = 0;
                     continue;
                 }
                 step = 2;
@@ -191,7 +196,7 @@ public class ContactController {
                 if (type == 1) {
                     System.out.print("Name to find (full name or just a part, e.g. Christian): ");
                     String typed = KeyInput.readLine(input);
-                    if (typed == null) {                          
+                    if (typed == null) {
                         step = 1;
                         continue;
                     }
@@ -202,12 +207,13 @@ public class ContactController {
                     }
                 } else if (type == 2) {
                     number = readNumber("ID to find (e.g. 1 or 1" + provider.getInitial() + "): ", provider, true);
-                    if (number == BACK) {                         
+                    if (number == BACK) {
+                        step = 1;
                         continue;
                     }
                 } else {
                     number = readNumber("Code to find (e.g. " + provider.getCode() + "): ", provider, false);
-                    if (number == BACK) {                         
+                    if (number == BACK) {
                         step = 1;
                         continue;
                     }
@@ -216,7 +222,6 @@ public class ContactController {
             }
         }
  
-        
         if (type == 1) {
             int[] matches = list.linearSearch(provider, name);
             if (matches.length == 0) {
@@ -234,7 +239,6 @@ public class ContactController {
             return;
         }
  
-       
         if (!list.isSortedById(provider)) {
             System.out.println("The list is NOT sorted by ID, so binary search cannot be used.");
             return;
@@ -255,28 +259,43 @@ public class ContactController {
         }
     }
  
- 
-    
-    private Contact askForContact() {
+    private Contact askForContact(boolean askPosition) {
         TelecoProvider provider = null;
         String name = null;
         String phone = null;
         String email = null;
         int step = 0;
  
-        while (step < 4) {
+        while (step < 5) {
             if (step == 0) {
                 provider = chooseProvider();
                 if (provider == null) {
                     return null;
                 }
-                step = 1;
+                step = askPosition ? 1 : 2;
  
             } else if (step == 1) {
+                menu.showContacts(provider);
+                int last = list.getSize(provider) + 1;
+                System.out.print("Insert at position (1 = first, " + last + " = last) in the "
+                        + provider.getName() + " array: ");
+                int position = readInt();
+                if (position == BACK) {
+                    step = 0;
+                    continue;
+                }
+                if (position < 1 || position > last) {
+                    System.out.println("  ✘ Invalid position! Pick 1 to " + last + ".");
+                    continue;
+                }
+                lastPosition = position;
+                step = 2;
+ 
+            } else if (step == 2) {
                 System.out.print("Name: ");
                 String typed = KeyInput.readLine(input);
                 if (typed == null) {
-                    step = 0;
+                    step = askPosition ? 1 : 0;
                     continue;
                 }
                 typed = typed.trim();
@@ -286,14 +305,14 @@ public class ContactController {
                     continue;
                 }
                 name = typed;
-                step = 2;
+                step = 3;
  
-            } else if (step == 2) {
+            } else if (step == 3) {
                 System.out.print("Phone (must start with a valid " + provider.getName() + " prefix, e.g. "
                         + provider.getPrefixesSample() + "): ");
                 String typed = KeyInput.readLine(input);
                 if (typed == null) {
-                    step = 1;
+                    step = 2;
                     continue;
                 }
                 typed = typed.trim();
@@ -303,13 +322,13 @@ public class ContactController {
                     continue;
                 }
                 phone = typed;
-                step = 3;
+                step = 4;
  
             } else {
-                System.out.print("Email (optional - just press ENTER to skip): ");   
+                System.out.print("Email (optional - just press ENTER to skip): ");
                 String typed = KeyInput.readLine(input);
                 if (typed == null) {
-                    step = 2;
+                    step = 3;
                     continue;
                 }
                 typed = typed.trim();
@@ -319,15 +338,14 @@ public class ContactController {
                     continue;
                 }
                 email = typed;
-                step = 4;
+                step = 5;
             }
         }
-       
+ 
         int id = list.nextId(provider);
         return new Contact(id, name, phone, email, provider, list.formatCode(provider, id));
     }
  
-
     private TelecoProvider chooseProvider() {
         while (true) {
             System.out.println("Choose Teleco Provider:");
@@ -347,8 +365,6 @@ public class ContactController {
         }
     }
  
- 
-    
     private void saveToFile(boolean showMessage) {
         if (FileHandler.save(list)) {
             if (showMessage) {
@@ -359,7 +375,6 @@ public class ContactController {
         }
     }
  
-    
     private void loadFromFile(boolean showMessage) {
         int loaded = FileHandler.load(list);
         if (loaded == -1) {
@@ -377,8 +392,6 @@ public class ContactController {
         }
     }
  
- 
-    
     private int readNumber(String prompt, TelecoProvider provider, boolean allowInitial) {
         while (true) {
             System.out.print(prompt);
@@ -415,8 +428,6 @@ public class ContactController {
         }
     }
  
- 
-   
     private int readInt() {
         while (true) {
             String typed = KeyInput.readLine(input);
@@ -443,4 +454,3 @@ public class ContactController {
         }
     }
 }
-

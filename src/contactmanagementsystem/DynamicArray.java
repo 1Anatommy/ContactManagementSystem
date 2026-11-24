@@ -5,15 +5,14 @@ public class DynamicArray<T> {
     private T[] data;
     private int size;
     private int capacity;
-    private String label;                      
+    private String label;
  
-    
     public static boolean debug = true;
  
     @SuppressWarnings("unchecked")
     public DynamicArray(String label) {
         this.label = label;
-        capacity = 4;                           
+        capacity = 4;
         data = (T[]) new Object[capacity];
         size = 0;
     }
@@ -46,8 +45,34 @@ public class DynamicArray<T> {
         return data[index];
     }
  
+    public void insert(int index, T element) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        if (size == capacity) {
+            resize();
+        }
+        for (int i = size; i > index; i--) {
+            data[i] = data[i - 1];
+        }
+        data[index] = element;
+        size++;
+    }
+ 
+    public T remove(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        T removed = data[index];
+        for (int i = index; i < size - 1; i++) {
+            data[i] = data[i + 1];
+        }
+        data[size - 1] = null;
+        size--;
+        return removed;
+    }
+ 
     public int size() { return size; }
     public int getCapacity() { return capacity; }
     public boolean isEmpty() { return size == 0; }
 }
-
