@@ -87,7 +87,7 @@ public class ContactController {
                     break;
                 case 0:
                     saveToFile(false);
-                    System.out.println("Goodbye!");
+                    System.out.println("Your contacts are safely saved. Thanks for using our Contact Manager!");
                     break;
                 default:
                     System.out.println("Invalid choice, try again.");
@@ -329,7 +329,7 @@ public class ContactController {
                 step = 2;
             } else {
                 if (type == 1) {
-                    System.out.print("Name to find (full name or just a part, e.g. Christian): ");
+                    System.out.print("Name to find (full name or just a part, e.g. Ethan or Macatangay): ");
                     String typed = KeyInput.readLine(input);
                     if (typed == null) {
                         step = 1;
