@@ -21,6 +21,7 @@ public class ContactMenu {
         System.out.println("║  6. Show size and capacity           ║ ");
         System.out.println("║  7. Save contacts to file            ║ ");
         System.out.println("║  8. Load contacts from file          ║ ");
+        System.out.println("║  9. Edit contact (by position)       ║ ");
         System.out.println("║  0. Exit                             ║");
         System.out.println("╚══════════════════════════════════════╝");
     }
@@ -53,4 +54,7 @@ public class ContactMenu {
                 + " | " + c.getProvider().getName() + " (" + c.getCorrespondingNumber() + ")");
     }
 }
+ 
+ 
+
 

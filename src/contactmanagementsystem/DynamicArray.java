@@ -1,6 +1,5 @@
 package contactmanagementsystem;
 
-
 public class DynamicArray<T> {
     private T[] data;
     private int size;

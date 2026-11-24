@@ -135,6 +135,24 @@ public class ContactList {
         return false;
     }
  
+    public boolean editContact(int index, String name, String phone, String email) {
+ 
+        Contact c = get(index);
+        if (c == null) {
+            return false;
+        }
+        if (name != null) {
+            c.setName(name);
+        }
+        if (phone != null) {
+            c.setPhone(phone);
+        }
+        if (email != null) {
+            c.setEmail(email);
+        }
+        return true;
+    }
+ 
     private void renumber(TelecoProvider provider) {
         DynamicArray<Contact> array = arrayOf(provider);
         for (int i = 0; i < array.size(); i++) {

@@ -82,6 +82,9 @@ public class ContactController {
                         System.out.println("No saved file yet (" + FileHandler.FILE_NAME + ").");
                     }
                     break;
+                case 9:
+                    editContact();
+                    break;
                 case 0:
                     saveToFile(false);
                     System.out.println("Goodbye!");
@@ -159,6 +162,138 @@ public class ContactController {
             saveToFile(false);
         } else {
             System.out.println("Could not delete (bad position).");
+        }
+    }
+ 
+    private void editContact() {
+        if (list.getSize() == 0) {
+            menu.showContacts();
+            return;
+        }
+ 
+        int step = 0;
+        int position = 0;
+        Contact c = null;
+        int field = 0;
+        String newName = null;
+        String newPhone = null;
+        String newEmail = null;
+ 
+        while (step < 3) {
+            if (step == 0) {
+                menu.showContacts();
+                System.out.print("Edit position: ");
+                position = readInt();
+                if (position == BACK) {
+                    return;
+                }
+                if (position < 1 || position > list.getSize()) {
+                    System.out.println("  ✘ Invalid position! Pick 1 to " + list.getSize() + ".");
+                    continue;
+                }
+                c = list.get(position - 1);
+                step = 1;
+ 
+            } else if (step == 1) {
+                newName = null;
+                newPhone = null;
+                newEmail = null;
+                System.out.println("Editing:");
+                menu.showContact(position, c);
+                System.out.println("What do you want to edit?");
+                System.out.println("  1. Name");
+                System.out.println("  2. Phone");
+                System.out.println("  3. Email");
+                System.out.println("  4. All of them");
+                System.out.print("Choose: ");
+                field = readInt();
+                if (field == BACK) {
+                    step = 0;
+                    continue;
+                }
+                if (field < 1 || field > 4) {
+                    System.out.println("  ✘ Invalid choice.");
+                    continue;
+                }
+                step = 2;
+ 
+            } else {
+                int[] order;
+                if (field == 4) {
+                    order = new int[] { 1, 2, 3 };
+                } else {
+                    order = new int[] { field };
+                }
+ 
+                int k = 0;
+                while (k >= 0 && k < order.length) {
+                    if (order[k] == 1) {
+                        System.out.print("New name (current: " + c.getName() + "): ");
+                        String typed = KeyInput.readLine(input);
+                        if (typed == null) {
+                            k--;
+                            continue;
+                        }
+                        typed = typed.trim();
+                        String error = Validator.checkName(typed);
+                        if (error != null) {
+                            System.out.println("  ✘ " + error);
+                            continue;
+                        }
+                        newName = typed;
+                        k++;
+ 
+                    } else if (order[k] == 2) {
+                        System.out.print("New phone (must start with a valid " + c.getProvider().getName()
+                                + " prefix, e.g. " + c.getProvider().getPrefixesSample()
+                                + ") (current: " + c.getPhone() + "): ");
+                        String typed = KeyInput.readLine(input);
+                        if (typed == null) {
+                            k--;
+                            continue;
+                        }
+                        typed = typed.trim();
+                        String error = Validator.checkPhone(typed, c.getProvider());
+                        if (error != null) {
+                            System.out.println("  ✘ " + error);
+                            continue;
+                        }
+                        newPhone = typed;
+                        k++;
+ 
+                    } else {
+                        System.out.print("New email (current: " + c.getEmailDisplay()
+                                + ") (ENTER with nothing = remove the email): ");
+                        String typed = KeyInput.readLine(input);
+                        if (typed == null) {
+                            k--;
+                            continue;
+                        }
+                        typed = typed.trim();
+                        String error = Validator.checkEmailOptional(typed);
+                        if (error != null) {
+                            System.out.println("  ✘ " + error);
+                            continue;
+                        }
+                        newEmail = typed;
+                        k++;
+                    }
+                }
+ 
+                if (k < 0) {
+                    step = 1;
+                    continue;
+                }
+                step = 3;
+            }
+        }
+ 
+        if (list.editContact(position - 1, newName, newPhone, newEmail)) {
+            System.out.println("Contact updated:");
+            menu.showContact(position, c);
+            saveToFile(false);
+        } else {
+            System.out.println("Could not edit (bad position).");
         }
     }
  
