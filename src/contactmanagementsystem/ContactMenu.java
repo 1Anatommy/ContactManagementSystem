@@ -11,25 +11,39 @@ public class ContactMenu {
     public void showOptions() {
         System.out.println();
         System.out.println("╔══════════════════════════════════════╗");
-        System.out.println("║           CONTACT MANAGER            ║");
+        System.out.println(boxLine("           CONTACT MANAGER"));
         System.out.println("╠══════════════════════════════════════╣");
-        System.out.println("║  1. Add contact (at the end)         ║ ");
-        System.out.println("║  2. Add contact (at a position)      ║ ");
-        System.out.println("║  3. Show all contacts                ║ ");
-        System.out.println("║  4. Delete contact (by position)     ║ ");
-        System.out.println("║  5. Search contact (name/ID/code)    ║ ");
-        System.out.println("║  6. Show size and capacity           ║ ");
-        System.out.println("║  7. Save contacts to file            ║ ");
-        System.out.println("║  8. Load contacts from file          ║ ");
-        System.out.println("║  9. Edit contact (by position)       ║ ");
-        System.out.println("║  0. Exit                             ║");
+        System.out.println(boxLine(optionText(1, "Add a new contact")));
+        System.out.println(boxLine(optionText(2, "Add a contact at a chosen place")));
+        System.out.println(boxLine(optionText(3, "Show all contacts")));
+        System.out.println(boxLine(optionText(4, "Delete a contact")));
+        System.out.println(boxLine(optionText(5, "Search for a contact")));
+        System.out.println(boxLine(optionText(6, "How many contacts are saved?")));
+        System.out.println(boxLine(optionText(7, "Save contacts to the file")));
+        System.out.println(boxLine(optionText(8, "Load contacts from the file")));
+        System.out.println(boxLine(optionText(9, "Edit a contact")));
+        System.out.println(boxLine(optionText(10, "Swap or move contacts")));
+        System.out.println(boxLine(optionText(0, "Exit")));
         System.out.println("╚══════════════════════════════════════╝");
+    }
+ 
+    private String optionText(int number, String text) {
+        String prefix = (number < 10) ? "  " : " ";
+        return prefix + number + ". " + text;
+    }
+ 
+    private String boxLine(String text) {
+        String padded = text;
+        while (padded.length() < 38) {
+            padded = padded + " ";
+        }
+        return "║" + padded + "║";
     }
  
     public void showContacts() {
         System.out.println("════════════════ CONTACTS ════════════════");
         if (list.getSize() == 0) {
-            System.out.println("  No contacts yet.");
+            System.out.println("  You have no contacts yet. Choose 1 in the menu to add your first contact.");
         }
         for (int i = 0; i < list.getSize(); i++) {
             showContact(i + 1, list.get(i));
@@ -40,7 +54,7 @@ public class ContactMenu {
     public void showContacts(TelecoProvider provider) {
         System.out.println("══════════ " + provider.getName().toUpperCase() + " CONTACTS ══════════");
         if (list.getSize(provider) == 0) {
-            System.out.println("  No " + provider.getName() + " contacts yet.");
+            System.out.println("  You have no " + provider.getName() + " contacts yet.");
         }
         for (int i = 0; i < list.getSize(provider); i++) {
             showContact(i + 1, list.get(provider, i));

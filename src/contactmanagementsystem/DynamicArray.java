@@ -6,7 +6,7 @@ public class DynamicArray<T> {
     private int capacity;
     private String label;
  
-    public static boolean debug = true;
+    public static boolean debug = false;
  
     @SuppressWarnings("unchecked")
     public DynamicArray(String label) {
@@ -69,6 +69,15 @@ public class DynamicArray<T> {
         data[size - 1] = null;
         size--;
         return removed;
+    }
+ 
+    public void swap(int firstIndex, int secondIndex) {
+        if (firstIndex < 0 || firstIndex >= size || secondIndex < 0 || secondIndex >= size) {
+            throw new IndexOutOfBoundsException("Indexes: " + firstIndex + ", " + secondIndex + ", Size: " + size);
+        }
+        T temp = data[firstIndex];
+        data[firstIndex] = data[secondIndex];
+        data[secondIndex] = temp;
     }
  
     public int size() { return size; }

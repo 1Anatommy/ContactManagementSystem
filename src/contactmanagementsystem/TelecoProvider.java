@@ -65,6 +65,24 @@ public class TelecoProvider {
         return sb.toString();
     }
  
+    public static TelecoProvider[] findProviders(String phoneNumber) {
+        int count = 0;
+        for (int i = 0; i < ALL.length; i++) {
+            if (ALL[i].isValidPrefix(phoneNumber)) {
+                count++;
+            }
+        }
+        TelecoProvider[] found = new TelecoProvider[count];
+        int next = 0;
+        for (int i = 0; i < ALL.length; i++) {
+            if (ALL[i].isValidPrefix(phoneNumber)) {
+                found[next] = ALL[i];
+                next++;
+            }
+        }
+        return found;
+    }
+ 
     public static TelecoProvider fromName(String name) {
         if (name == null) return null;
         for (int i = 0; i < ALL.length; i++) {

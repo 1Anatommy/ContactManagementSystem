@@ -39,9 +39,9 @@ public class KeyInput {
             start();
         }
         if (mode == MODE_LINE) {
-            return "Tip: to go back one step, type ESC (or the ` key) and press ENTER.";
+            return "To go back one step, type the ` key (just below ESC) and press ENTER.";
         }
-        return "Tip: press ESC (or Backspace on an empty field) to go back one step.";
+        return "To go back one step, press the ESC key (or Backspace on an empty line).";
     }
  
     private static void start() {
@@ -306,3 +306,5 @@ public class KeyInput {
         System.exit(0);
     }
 }
+ 
+ 

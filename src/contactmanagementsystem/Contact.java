@@ -1,5 +1,4 @@
 package contactmanagementsystem;
-
 public class Contact {
  
     private int    id;

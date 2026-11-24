@@ -37,7 +37,6 @@ public class FileHandler {
             }
             return true;
         } catch (java.io.IOException e) {
-            System.out.println("Error saving contacts to file: " + e.getMessage());
             return false;
         }
     }
@@ -51,6 +50,7 @@ public class FileHandler {
         }
  
         int loaded = 0;
+        boolean debugBefore = DynamicArray.debug;
         DynamicArray.debug = false;
         try (java.io.BufferedReader reader = new java.io.BufferedReader(
                 new java.io.InputStreamReader(new java.io.FileInputStream(file), "UTF-8"))) {
@@ -80,10 +80,9 @@ public class FileHandler {
             }
             return loaded;
         } catch (java.io.IOException e) {
-            System.out.println("Error loading contacts from file: " + e.getMessage());
             return -1;
         } finally {
-            DynamicArray.debug = true;
+            DynamicArray.debug = debugBefore;
         }
     }
  

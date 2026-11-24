@@ -135,6 +135,69 @@ public class ContactList {
         return false;
     }
  
+    public TelecoProvider providerAt(int index) {
+        if (index < 0) {
+            return null;
+        }
+        for (int i = 0; i < TelecoProvider.ALL.length; i++) {
+            DynamicArray<Contact> array = arrayOf(TelecoProvider.ALL[i]);
+            if (index < array.size()) {
+                return TelecoProvider.ALL[i];
+            }
+            index = index - array.size();
+        }
+        return null;
+    }
+ 
+    public int startPosition(TelecoProvider provider) {
+        int start = 1;
+        for (int i = 0; i < TelecoProvider.ALL.length; i++) {
+            if (TelecoProvider.ALL[i] == provider) {
+                return start;
+            }
+            start = start + arrayOf(TelecoProvider.ALL[i]).size();
+        }
+        return start;
+    }
+ 
+    public int swapContacts(int indexA, int indexB) {
+        TelecoProvider providerA = providerAt(indexA);
+        TelecoProvider providerB = providerAt(indexB);
+        if (providerA == null || providerB == null) {
+            return 1;
+        }
+        if (providerA != providerB) {
+            return 2;
+        }
+        if (indexA == indexB) {
+            return 3;
+        }
+        int start = startPosition(providerA) - 1;
+        arrayOf(providerA).swap(indexA - start, indexB - start);
+        renumber(providerA);
+        return 0;
+    }
+ 
+    public int moveContact(int fromIndex, int toIndex) {
+        TelecoProvider providerFrom = providerAt(fromIndex);
+        TelecoProvider providerTo = providerAt(toIndex);
+        if (providerFrom == null || providerTo == null) {
+            return 1;
+        }
+        if (providerFrom != providerTo) {
+            return 2;
+        }
+        if (fromIndex == toIndex) {
+            return 3;
+        }
+        int start = startPosition(providerFrom) - 1;
+        DynamicArray<Contact> array = arrayOf(providerFrom);
+        Contact moving = array.remove(fromIndex - start);
+        array.insert(toIndex - start, moving);
+        renumber(providerFrom);
+        return 0;
+    }
+ 
     public boolean editContact(int index, String name, String phone, String email) {
  
         Contact c = get(index);
