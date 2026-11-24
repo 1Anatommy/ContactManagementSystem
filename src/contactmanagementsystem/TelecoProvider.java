@@ -1,6 +1,5 @@
 package contactmanagementsystem;
 
-
 public class TelecoProvider {
  
     public static final TelecoProvider SMART = new TelecoProvider("Smart", "001", new String[] {
